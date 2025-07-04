@@ -1,1388 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Together</title>
-    <style>
-        /* Reset dan Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header */
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .logo h1 {
-            color: #667eea;
-            font-size: 2rem;
-        }
-
-        .room-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        #room-status {
-            padding: 8px 16px;
-            background: #f0f0f0;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        .users-count {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 16px;
-            background: #667eea;
-            color: white;
-            border-radius: 20px;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        /* Room Controls */
-        .room-controls {
-            grid-column: 1 / -1;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .room-join, .user-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .room-join input, .user-controls input {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .room-join button, .user-controls button {
-            padding: 12px 24px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s;
-        }
-
-        .room-join button:hover, .user-controls button:hover {
-            background: #5a6fd8;
-        }
-
-        /* Search Section */
-        .search-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .search-bar input {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .search-bar button {
-            padding: 12px 24px;
-            background: #764ba2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s;
-        }
-
-        .search-bar button:hover {
-            background: #6a4190;
-        }
-
-        .search-results {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .video-result {
-            display: flex;
-            gap: 15px;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .video-result:hover {
-            background: #f8f9fa;
-        }
-
-        .video-result img {
-            width: 120px;
-            height: 90px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-
-        .video-info h4 {
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        .video-info p {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        /* Player Section */
-        .player-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .video-container {
-            margin-bottom: 20px;
-        }
-
-        #youtube-player {
-            width: 100%;
-            height: 300px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .video-info {
-            padding: 15px 0;
-        }
-
-        .video-info h3 {
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        .video-info p {
-            color: #666;
-        }
-
-        /* Player Controls */
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .control-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
-        }
-
-        .control-btn:hover {
-            background: #5a6fd8;
-        }
-
-        .progress-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .progress-bar {
-            flex: 1;
-            height: 6px;
-            background: #ddd;
-            border-radius: 3px;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #667eea;
-            transition: width 0.3s;
-        }
-
-        .time-info {
-            display: flex;
-            gap: 5px;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #volume-slider {
-            width: 80px;
-        }
-
-        /* Queue Section */
-        .queue-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .queue-section h3 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .queue-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .queue-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-
-        .queue-item img {
-            width: 60px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .queue-item-info {
-            flex: 1;
-        }
-
-        .queue-item-info h5 {
-            margin-bottom: 4px;
-            font-size: 0.9rem;
-        }
-
-        .queue-item-info p {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .remove-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .remove-btn:hover {
-            background: #c82333;
-        }
-
-        .empty-queue {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            padding: 20px;
-        }
-
-        /* Chat Section */
-        .chat-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .chat-section h3 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .chat-messages {
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: white;
-        }
-
-        .chat-message {
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 5px;
-            background: #f8f9fa;
-        }
-
-        .chat-message .username {
-            font-weight: bold;
-            color: #667eea;
-            margin-right: 8px;
-        }
-
-        .chat-message .timestamp {
-            font-size: 0.8rem;
-            color: #666;
-            float: right;
-        }
-
-        .chat-input {
-            display: flex;
-            gap: 10px;
-        }
-
-        .chat-input input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .chat-input button {
-            padding: 8px 16px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .chat-input button:hover {
-            background: #218838;
-        }
-
-        /* Users Section */
-        .users-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .users-section h3 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .users-list {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .user-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            background: #f8f9fa;
-        }
-
-        .user-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #667eea;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .user-status {
-            margin-left: auto;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-        }
-
-        .user-status.online {
-            background: #28a745;
-            color: white;
-        }
-
-        .user-status.offline {
-            background: #6c757d;
-            color: white;
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            display: none;
-        }
-
-        .loading-overlay.show {
-            display: flex;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-overlay p {
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            
-            .room-join, .user-controls {
-                flex-direction: column;
-            }
-            
-            .search-bar {
-                flex-direction: column;
-            }
-            
-            .player-controls {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            
-            .progress-container {
-                order: -1;
-                width: 100%;
-            }
-            
-            .video-result {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .video-result img {
-                width: 100%;
-                height: auto;
-            }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #5a6fd8;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Together</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    #search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    #search-bar input {
+      flex: 1;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    #search-bar button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .video-result {
+      display: flex;
+      gap: 10px;
+      background: #f0f0f0;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .video-result img {
+      width: 120px;
+      height: 90px;
+      border-radius: 5px;
+    }
+
+    .video-info h4 {
+      margin: 0;
+    }
+
+    #player-section {
+      margin-top: 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    #youtube-frame {
+      width: 100%;
+      height: 400px;
+      border: none;
+      border-radius: 10px;
+    }
+
+    #controls {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .control-btn {
+      padding: 10px;
+      border: none;
+      background: #667eea;
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .progress {
+      flex: 1;
+      height: 8px;
+      background: #ccc;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #764ba2;
+      width: 0%;
+    }
+
+    .time-info {
+      font-size: 0.9rem;
+    }
+
+    #volume {
+      width: 80px;
+    }
+
+    #queue {
+      margin-top: 30px;
+    }
+
+    .queue-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fafafa;
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .queue-item img {
+      width: 60px;
+      height: 45px;
+      border-radius: 4px;
+    }
+
+    .queue-item h5 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .queue-item small {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .remove-btn {
+      margin-left: auto;
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <h1>🎵 Music Together</h1>
-            </div>
-            <div class="room-info">
-                <span id="room-status">Solo Mode</span>
-                <div class="users-count">
-                    <span id="users-icon">👥</span>
-                    <span id="users-count">1</span>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Room Controls -->
-            <div class="room-controls">
-                <div class="room-join">
-                    <input type="text" id="room-input" placeholder="Enter Room Code" disabled>
-                    <button id="join-btn" disabled>Join Room (Coming Soon)</button>
-                    <button id="create-btn" disabled>Create Room (Coming Soon)</button>
-                </div>
-                <div class="user-controls">
-                    <input type="text" id="username-input" placeholder="Your Username">
-                    <button id="set-username">Set Username</button>
-                </div>
-            </div>
-
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="search-bar">
-                    <input type="text" id="search-input" placeholder="Search YouTube videos...">
-                    <button id="search-btn">Search</button>
-                </div>
-                <div class="search-results" id="search-results"></div>
-            </div>
-
-            <!-- Video Player Section -->
-            <div class="player-section">
-                <div class="video-container">
-                    <div id="youtube-player"></div>
-                    <div class="video-info">
-                        <h3 id="current-title">No video selected</h3>
-                        <p id="current-channel">Select a video to start</p>
-                    </div>
-                </div>
-                
-                <!-- Player Controls -->
-                <div class="player-controls">
-                    <button id="play-btn" class="control-btn">
-                        <span class="icon">▶️</span>
-                    </button>
-                    <button id="pause-btn" class="control-btn" style="display: none;">
-                        <span class="icon">⏸️</span>
-                    </button>
-                    <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progress-fill"></div>
-                        </div>
-                        <div class="time-info">
-                            <span id="current-time">0:00</span>
-                            <span id="total-time">0:00</span>
-                        </div>
-                    </div>
-                    <div class="volume-control">
-                        <button id="volume-btn" class="control-btn">
-                            <span class="icon">🔊</span>
-                        </button>
-                        <input type="range" id="volume-slider" min="0" max="100" value="50">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Queue Section -->
-            <div class="queue-section">
-                <h3>Queue</h3>
-                <div class="queue-list" id="queue-list">
-                    <p class="empty-queue">No videos in queue</p>
-                </div>
-            </div>
-
-            <!-- Chat Section -->
-            <div class="chat-section">
-                <h3>Chat (Solo Mode)</h3>
-                <div class="chat-messages" id="chat-messages">
-                    <div class="chat-message">
-                        <span class="username">System:</span>
-                        <span class="message">Welcome to Music Together! Set your username and start searching for videos.</span>
-                        <span class="timestamp">Now</span>
-                    </div>
-                </div>
-                <div class="chat-input">
-                    <input type="text" id="message-input" placeholder="Type a message to yourself...">
-                    <button id="send-btn">Send</button>
-                </div>
-            </div>
-
-            <!-- Users List -->
-            <div class="users-section">
-                <h3>Users</h3>
-                <div class="users-list" id="users-list">
-                    <div class="user-item">
-                        <div class="user-avatar">Y</div>
-                        <span id="current-user-display">You</span>
-                        <span class="user-status online">online</span>
-                    </div>
-                </div>
-            </div>
-        </main>
+  <div class="container">
+    <h1>🎵 Music Together</h1>
+    <div id="search-bar">
+      <input type="text" id="search-input" placeholder="Search YouTube...">
+      <button onclick="search()">Search</button>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="spinner"></div>
-        <p>Loading...</p>
+    <div id="results"></div>
+
+    <div id="player-section" style="display: none;">
+      <iframe id="youtube-frame" src=""></iframe>
+
+      <div id="controls">
+        <button class="control-btn" id="play">▶️</button>
+        <button class="control-btn" id="pause">⏸️</button>
+        <div class="progress" onclick="seek(event)">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="time-info"><span id="current-time">0:00</span> / <span id="duration">0:00</span></div>
+        <button class="control-btn" id="mute">🔊</button>
+        <input type="range" id="volume" min="0" max="100" value="50">
+      </div>
     </div>
 
-    <script>
-        // YouTube API Handler
-        class YouTubeAPI {
-            static API_KEY = "AIzaSyB59tvqGw1VbuhDEoGltDFRMfoJWoL20CQ";
-            static BASE_URL = "https://www.googleapis.com/youtube/v3";
+    <div id="queue">
+      <h3 style="color:white;">Queue</h3>
+      <div id="queue-list"></div>
+    </div>
+  </div>
 
-            static async search(query, maxResults = 10) {
-                // Since we don't have a real API key, return mock data
-                return this.getMockData(query);
-            }
+  <script>
+    const API_KEY = 'AIzaSyAC5NObht8z8Osj5JusK4QhotaohQAKGv8';
+    let queue = [];
+    let currentIndex = -1;
+    let player;
+    let interval;
 
-            static getMockData(query) {
-                const mockVideos = [
-                    {
-                        videoId: "dQw4w9WgXcQ",
-                        title: "Rick Astley - Never Gonna Give You Up",
-                        channel: "Rick Astley",
-                        thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
-                        duration: "3:33",
-                        publishedAt: "2009-10-25T06:57:33Z",
-                        description: 'The official video for "Never Gonna Give You Up"'
-                    },
-                    {
-                        videoId: "J---aiyznGQ",
-                        title: "Keyboard Cat",
-                        channel: "Keyboard Cat",
-                        thumbnail: "https://img.youtube.com/vi/J---aiyznGQ/mqdefault.jpg",
-                        duration: "0:54",
-                        publishedAt: "2009-06-07T00:23:03Z",
-                        description: "The original keyboard cat video"
-                    },
-                    {
-                        videoId: "kffacxfA7G4",
-                        title: "Baby Shark Dance",
-                        channel: "Pinkfong! Kids' Songs & Stories",
-                        thumbnail: "https://img.youtube.com/vi/kffacxfA7G4/mqdefault.jpg",
-                        duration: "2:17",
-                        publishedAt: "2016-06-17T08:00:31Z",
-                        description: "Sing and dance along with Baby Shark"
-                    },
-                    {
-                        videoId: "9bZkp7q19f0",
-                        title: "PSY - GANGNAM STYLE",
-                        channel: "officialpsy",
-                        thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg",
-                        duration: "4:13",
-                        publishedAt: "2012-07-15T07:54:14Z",
-                        description: "PSY - GANGNAM STYLE Official Music Video"
-                    },
-                    {
-                        videoId: "fJ9rUzIMcZQ",
-                        title: "Queen - Bohemian Rhapsody",
-                        channel: "Queen Official",
-                        thumbnail: "https://img.youtube.com/vi/fJ9rUzIMcZQ/mqdefault.jpg",
-                        duration: "5:55",
-                        publishedAt: "2008-08-01T15:29:52Z",
-                        description: "Bohemian Rhapsody by Queen"
-                    }
-                ];
+    function search() {
+      const query = document.getElementById("search-input").value.trim();
+      if (!query) return;
 
-                // Filter based on search query
-                if (query) {
-                    const filtered = mockVideos.filter(video => 
-                        video.title.toLowerCase().includes(query.toLowerCase()) ||
-                        video.channel.toLowerCase().includes(query.toLowerCase())
-                    );
-                    return filtered.length > 0 ? filtered : mockVideos;
-                }
+      fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(query)}&key=${API_KEY}`)
+        .then(res => res.json())
+        .then(data => showResults(data.items));
+    }
 
-                return mockVideos;
-            }
+    function showResults(videos) {
+      const results = document.getElementById("results");
+      results.innerHTML = "";
 
-            static formatTime(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = Math.floor(seconds % 60);
-                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-            }
+      videos.forEach(video => {
+        const vid = video.id.videoId;
+        const { title, channelTitle, thumbnails } = video.snippet;
+
+        const div = document.createElement("div");
+        div.className = "video-result";
+        div.innerHTML = `
+          <img src="${thumbnails.medium.url}">
+          <div class="video-info">
+            <h4>${title}</h4>
+            <p>${channelTitle}</p>
+          </div>
+        `;
+        div.onclick = () => addToQueue({ vid, title, channelTitle, thumb: thumbnails.default.url });
+        results.appendChild(div);
+      });
+    }
+
+    function addToQueue(video) {
+      queue.push(video);
+      updateQueue();
+      if (currentIndex === -1) {
+        currentIndex = 0;
+        loadVideo(queue[0].vid);
+      }
+    }
+
+    function updateQueue() {
+      const list = document.getElementById("queue-list");
+      list.innerHTML = "";
+      queue.forEach((v, i) => {
+        const item = document.createElement("div");
+        item.className = "queue-item";
+        item.innerHTML = `
+          <img src="${v.thumb}">
+          <div>
+            <h5>${v.title}</h5>
+            <small>${v.channelTitle}</small>
+          </div>
+          <button class="remove-btn" onclick="removeFromQueue(${i})">Remove</button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function removeFromQueue(index) {
+      queue.splice(index, 1);
+      if (index === currentIndex) {
+        if (queue.length > 0) {
+          currentIndex = 0;
+          loadVideo(queue[0].vid);
+        } else {
+          currentIndex = -1;
+          document.getElementById("player-section").style.display = "none";
         }
-
-        // Main Application Class
-        class MusicTogether {
-            constructor() {
-                this.currentUser = null;
-                this.isPlaying = false;
-                this.currentVideoId = null;
-                this.searchResults = [];
-                this.queue = [];
-                this.messages = [];
-                this.playerReady = false;
-                this.progressInterval = null;
-
-                this.init();
-            }
-
-            init() {
-                this.setupEventListeners();
-                this.setupYouTubePlayer();
-                this.loadStoredData();
-            }
-
-            setupEventListeners() {
-                // User controls
-                document.getElementById('set-username').addEventListener('click', () => this.setUsername());
-
-                // Search functionality
-                document.getElementById('search-btn').addEventListener('click', () => this.searchVideos());
-                document.getElementById('search-input').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.searchVideos();
-                });
-
-                // Player controls
-                document.getElementById('play-btn').addEventListener('click', () => this.playVideo());
-                document.getElementById('pause-btn').addEventListener('click', () => this.pauseVideo());
-                document.getElementById('volume-btn').addEventListener('click', () => this.toggleMute());
-                document.getElementById('volume-slider').addEventListener('input', (e) => this.setVolume(e.target.value));
-
-                // Chat functionality
-                document.getElementById('send-btn').addEventListener('click', () => this.sendMessage());
-                document.getElementById('message-input').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.sendMessage();
-                });
-
-                // Progress bar
-                document.querySelector('.progress-bar').addEventListener('click', (e) => this.seekTo(e));
-            }
-
-            setupYouTubePlayer() {
-                // Load YouTube API
-                const tag = document.createElement('script');
-                tag.src = 'https://www.youtube.com/iframe_api';
-                const firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-                window.onYouTubeIframeAPIReady = () => {
-                    this.player = new YT.Player('youtube-player', {
-                        height: '300',
-                        width: '100%',
-                        videoId: '',
-                        playerVars: {
-                            autoplay: 0,
-                            controls: 1,
-                            disablekb: 0,
-                            fs: 1,
-                            modestbranding: 1,
-                            rel: 0,
-                            showinfo: 0
-                        },
-                        events: {
-                            'onReady': (event) => this.onPlayerReady(event),
-                            'onStateChange': (event) => this.onPlayerStateChange(event)
-                        }
-                    });
-                };
-            }
-
-            loadStoredData() {
-                const savedUsername = this.getStoredData('username');
-                if (savedUsername) {
-                    document.getElementById('username-input').value = savedUsername;
-                    this.currentUser = savedUsername;
-                    this.updateUserDisplay();
-                }
-            }
-
-            setUsername() {
-                const username = document.getElementById('username-input').value.trim();
-                if (username) {
-                    this.currentUser = username;
-                    this.storeData('username', username);
-                    this.updateUserDisplay();
-                    this.showSuccess('Username set successfully');
-                }
-            }
-
-            updateUserDisplay() {
-                if (this.currentUser) {
-                    document.getElementById('current-user-display').textContent = this.currentUser;
-                    document.querySelector('.user-avatar').textContent = this.currentUser.charAt(0).toUpperCase();
-                }
-            }
-
-            async searchVideos() {
-                const query = document.getElementById('search-input').value.trim();
-                if (!query) return;
-
-                this.showLoading(true);
-
-                try {
-                    const videos = await YouTubeAPI.search(query);
-                    this.searchResults = videos;
-                    this.displaySearchResults(videos);
-                } catch (error) {
-                    this.showError('Error searching videos: ' + error.message);
-                } finally {
-                    this.showLoading(false);
-                }
-            }
-
-            displaySearchResults(videos) {
-                const resultsContainer = document.getElementById('search-results');
-                resultsContainer.innerHTML = '';
-
-                videos.forEach(video => {
-                    const videoElement = document.createElement('div');
-                    videoElement.className = 'video-result';
-                    videoElement.innerHTML = `
-                        <img src="${video.thumbnail}" alt="${video.title}">
-                        <div class="video-info">
-                            <h4>${video.title}</h4>
-                            <p>${video.channel} • ${video.duration}</p>
-                        </div>
-                    `;
-
-                    videoElement.addEventListener('click', () => this.addToQueue(video));
-                    resultsContainer.appendChild(videoElement);
-                });
-            }
-
-            addToQueue(video) {
-                this.queue.push(video);
-                this.updateQueueDisplay();
-                this.showSuccess(`Added "${video.title}" to queue`);
-
-                // Auto-play first video if none is playing
-                if (!this.currentVideoId && this.queue.length === 1) {
-                    this.playNext();
-                }
-            }
-
-            updateQueueDisplay() {
-                const queueContainer = document.getElementById('queue-list');
-
-                if (this.queue.length === 0) {
-                    queueContainer.innerHTML = '<p class="empty-queue">No videos in queue</p>';
-                    return;
-                }
-
-                queueContainer.innerHTML = '';
-                this.queue.forEach((video, index) => {
-                    const queueItem = document.createElement('div');
-                    queueItem.className = 'queue-item';
-                    queueItem.innerHTML = `
-                        <img src="${video.thumbnail}" alt="${video.title}">
-                        <div class="queue-item-info">
-                            <h5>${video.title}</h5>
-                            <p>${video.channel} • ${video.duration}</p>
-                        </div>
-                        <button class="remove-btn" onclick="app.removeFromQueue(${index})">Remove</button>
-                    `;
-                    queueContainer.appendChild(queueItem);
-                });
-            }
-
-            removeFromQueue(index) {
-                if (index >= 0 && index < this.queue.length) {
-                    const removed = this.queue.splice(index, 1)[0];
-                    this.updateQueueDisplay();
-                    this.showSuccess(`Removed "${removed.title}" from queue`);
-                }
-            }
-
-            onPlayerReady(event) {
-                this.playerReady = true;
-                this.updatePlayerControls();
-
-                // Start progress update interval
-                this.progressInterval = setInterval(() => {
-                    this.updateProgress();
-                }, 1000);
-            }
-
-            onPlayerStateChange(event) {
-                const state = event.data;
-
-                if (state === YT.PlayerState.PLAYING) {
-                    this.isPlaying = true;
-                } else if (state === YT.PlayerState.PAUSED) {
-                    this.isPlaying = false;
-                } else if (state === YT.PlayerState.ENDED) {
-                    this.playNext();
-                }
-
-                this.updatePlayerControls();
-            }
-
-            loadVideo(videoId) {
-                if (!this.playerReady) return;
-
-                this.currentVideoId = videoId;
-                this.player.loadVideoById(videoId);
-
-                // Update video info
-                const video = this.findVideoById(videoId);
-                if (video) {
-                    document.getElementById('current-title').textContent = video.title;
-                    document.getElementById('current-channel').textContent = video.channel;
-                }
-            }
-
-            findVideoById(videoId) {
-                // Search in queue first
-                let video = this.queue.find(v => v.videoId === videoId);
-                if (!video) {
-                    // Search in search results
-                    video = this.searchResults.find(v => v.videoId === videoId);
-                }
-                return video;
-            }
-
-            playVideo() {
-                if (!this.playerReady) return;
-
-                if (this.currentVideoId) {
-                    this.player.playVideo();
-                } else if (this.queue.length > 0) {
-                    this.playNext();
-                }
-            }
-
-            pauseVideo() {
-                if (!this.playerReady) return;
-                this.player.pauseVideo();
-            }
-
-            playNext() {
-                if (this.queue.length === 0) {
-                    this.showInfo('Queue is empty');
-                    return;
-                }
-
-                const nextVideo = this.queue.shift();
-                this.loadVideo(nextVideo.videoId);
-                this.updateQueueDisplay();
-                this.addChatMessage('System', `Now playing: ${nextVideo.title}`);
-            }
-
-            setVolume(volume) {
-                if (!this.playerReady) return;
-                this.player.setVolume(volume);
-                
-                // Update volume button icon
-                const volumeBtn = document.getElementById('volume-btn');
-                const icon = volumeBtn.querySelector('.icon');
-                if (volume == 0) {
-                    icon.textContent = '🔇';
-                } else if (volume < 30) {
-                    icon.textContent = '🔉';
-                } else {
-                    icon.textContent = '🔊';
-                }
-            }
-
-            toggleMute() {
-                if (!this.playerReady) return;
-                
-                const volumeSlider = document.getElementById('volume-slider');
-                const currentVolume = this.player.getVolume();
-                
-                if (currentVolume > 0) {
-                    this.player.mute();
-                    volumeSlider.value = 0;
-                    this.setVolume(0);
-                } else {
-                    this.player.unMute();
-                    const savedVolume = volumeSlider.value || 50;
-                    this.setVolume(savedVolume);
-                }
-            }
-
-            seekTo(event) {
-                if (!this.playerReady || !this.currentVideoId) return;
-
-                const progressBar = event.currentTarget;
-                const rect = progressBar.getBoundingClientRect();
-                const clickX = event.clientX - rect.left;
-                const percentage = clickX / rect.width;
-                
-                const duration = this.player.getDuration();
-                const seekTime = duration * percentage;
-                
-                this.player.seekTo(seekTime);
-            }
-
-            updateProgress() {
-                if (!this.playerReady || !this.currentVideoId) return;
-
-                const currentTime = this.player.getCurrentTime();
-                const duration = this.player.getDuration();
-                
-                if (duration > 0) {
-                    const percentage = (currentTime / duration) * 100;
-                    document.getElementById('progress-fill').style.width = percentage + '%';
-                    
-                    document.getElementById('current-time').textContent = YouTubeAPI.formatTime(currentTime);
-                    document.getElementById('total-time').textContent = YouTubeAPI.formatTime(duration);
-                }
-            }
-
-            updatePlayerControls() {
-                const playBtn = document.getElementById('play-btn');
-                const pauseBtn = document.getElementById('pause-btn');
-
-                if (this.isPlaying) {
-                    playBtn.style.display = 'none';
-                    pauseBtn.style.display = 'block';
-                } else {
-                    playBtn.style.display = 'block';
-                    pauseBtn.style.display = 'none';
-                }
-            }
-
-            sendMessage() {
-                const messageInput = document.getElementById('message-input');
-                const message = messageInput.value.trim();
-
-                if (message && this.currentUser) {
-                    this.addChatMessage(this.currentUser, message);
-                    messageInput.value = '';
-                }
-            }
-
-            addChatMessage(username, message) {
-                const chatMessages = document.getElementById('chat-messages');
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'chat-message';
-                
-                const timestamp = new Date().toLocaleTimeString();
-                messageDiv.innerHTML = `
-                    <span class="username">${username}:</span>
-                    <span class="message">${message}</span>
-                    <span class="timestamp">${timestamp}</span>
-                `;
-
-                chatMessages.appendChild(messageDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                // Store message
-                this.messages.push({
-                    username,
-                    message,
-                    timestamp
-                });
-            }
-
-            showLoading(show) {
-                const loadingOverlay = document.getElementById('loading-overlay');
-                if (show) {
-                    loadingOverlay.classList.add('show');
-                } else {
-                    loadingOverlay.classList.remove('show');
-                }
-            }
-
-            showSuccess(message) {
-                this.showNotification(message, 'success');
-            }
-
-            showError(message) {
-                this.showNotification(message, 'error');
-            }
-
-            showInfo(message) {
-                this.showNotification(message, 'info');
-            }
-
-            showNotification(message, type = 'info') {
-                // Create notification element
-                const notification = document.createElement('div');
-                notification.className = `notification notification-${type}`;
-                notification.textContent = message;
-                
-                // Add styles
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    padding: 15px 20px;
-                    border-radius: 8px;
-                    color: white;
-                    font-weight: bold;
-                    z-index: 1001;
-                    animation: slideIn 0.3s ease-out;
-                    max-width: 300px;
-                    word-wrap: break-word;
-                `;
-
-                // Set background color based on type
-                switch (type) {
-                    case 'success':
-                        notification.style.backgroundColor = '#28a745';
-                        break;
-                    case 'error':
-                        notification.style.backgroundColor = '#dc3545';
-                        break;
-                    case 'info':
-                        notification.style.backgroundColor = '#17a2b8';
-                        break;
-                }
-
-                // Add animation styles
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes slideIn {
-                        from {
-                            transform: translateX(100%);
-                            opacity: 0;
-                        }
-                        to {
-                            transform: translateX(0);
-                            opacity: 1;
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-
-                // Add to DOM
-                document.body.appendChild(notification);
-
-                // Remove after 3 seconds
-                setTimeout(() => {
-                    notification.remove();
-                }, 3000);
-            }
-
-            // Storage methods (using variables since localStorage is not available)
-            storeData(key, value) {
-                // In a real app, this would use localStorage
-                // For now, we'll just store in memory
-                if (!window.appStorage) {
-                    window.appStorage = {};
-                }
-                window.appStorage[key] = value;
-            }
-
-            getStoredData(key) {
-                // In a real app, this would use localStorage
-                if (!window.appStorage) {
-                    return null;
-                }
-                return window.appStorage[key];
-            }
-
-            // Utility methods
-            formatDuration(seconds) {
-                return YouTubeAPI.formatTime(seconds);
-            }
-
-            // Cleanup method
-            destroy() {
-                if (this.progressInterval) {
-                    clearInterval(this.progressInterval);
-                }
-            }
-        }
-
-        // Initialize the application
-        let app;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            app = new MusicTogether();
-        });
-
-        // Handle page unload
-        window.addEventListener('beforeunload', () => {
-            if (app) {
-                app.destroy();
-            }
-        });
-
-        // Global functions for queue management
-        window.removeFromQueue = function(index) {
-            if (app) {
-                app.removeFromQueue(index);
-            }
-        };
-
-        // Handle keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (!app || !app.playerReady) return;
-
-            switch (e.key) {
-                case ' ':
-                    if (e.target.tagName !== 'INPUT') {
-                        e.preventDefault();
-                        if (app.isPlaying) {
-                            app.pauseVideo();
-                        } else {
-                            app.playVideo();
-                        }
-                    }
-                    break;
-                case 'ArrowLeft':
-                    if (e.target.tagName !== 'INPUT') {
-                        e.preventDefault();
-                        const currentTime = app.player.getCurrentTime();
-                        app.player.seekTo(Math.max(0, currentTime - 10));
-                    }
-                    break;
-                case 'ArrowRight':
-                    if (e.target.tagName !== 'INPUT') {
-                        e.preventDefault();
-                        const currentTime = app.player.getCurrentTime();
-                        const duration = app.player.getDuration();
-                        app.player.seekTo(Math.min(duration, currentTime + 10));
-                    }
-                    break;
-                case 'ArrowUp':
-                    if (e.target.tagName !== 'INPUT') {
-                        e.preventDefault();
-                        const volumeSlider = document.getElementById('volume-slider');
-                        const newVolume = Math.min(100, parseInt(volumeSlider.value) + 10);
-                        volumeSlider.value = newVolume;
-                        app.setVolume(newVolume);
-                    }
-                    break;
-                case 'ArrowDown':
-                    if (e.target.tagName !== 'INPUT') {
-                        e.preventDefault();
-                        const volumeSlider = document.getElementById('volume-slider');
-                        const newVolume = Math.max(0, parseInt(volumeSlider.value) - 10);
-                        volumeSlider.value = newVolume;
-                        app.setVolume(newVolume);
-                    }
-                    break;
-                case 'Enter':
-                    if (e.target.id === 'search-input') {
-                        e.preventDefault();
-                        app.searchVideos();
-                    } else if (e.target.id === 'message-input') {
-                        e.preventDefault();
-                        app.sendMessage();
-                    }
-                    break;
-            }
-        });
-
-        // Add some sample videos to demonstrate functionality
-        window.addSampleVideos = function() {
-            const sampleVideos = [
-                {
-                    videoId: "dQw4w9WgXcQ",
-                    title: "Rick Astley - Never Gonna Give You Up",
-                    channel: "Rick Astley",
-                    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
-                    duration: "3:33"
-                },
-                {
-                    videoId: "J---aiyznGQ",
-                    title: "Keyboard Cat",
-                    channel: "Keyboard Cat",
-                    thumbnail: "https://img.youtube.com/vi/J---aiyznGQ/mqdefault.jpg",
-                    duration: "0:54"
-                }
-            ];
-
-            sampleVideos.forEach(video => {
-                if (app) {
-                    app.addToQueue(video);
-                }
-            });
-        };
-
-        // Error handling
-        window.addEventListener('error', (e) => {
-            console.error('Application error:', e.error);
-            if (app) {
-                app.showError('An error occurred. Please refresh the page.');
-            }
-        });
-
-        // Handle YouTube API load errors
-        window.addEventListener('load', () => {
-            // Check if YouTube API loaded after 5 seconds
-            setTimeout(() => {
-                if (typeof YT === 'undefined') {
-                    console.warn('YouTube API failed to load');
-                    if (app) {
-                        app.showError('YouTube API failed to load. Some features may not work.');
-                    }
-                }
-            }, 5000);
-        });
+      }
+      updateQueue();
+    }
+
+    function loadVideo(id) {
+      document.getElementById("youtube-frame").src = `https://www.youtube.com/embed/${id}?enablejsapi=1&autoplay=1`;
+      document.getElementById("player-section").style.display = "block";
+    }
+
+    // Player Controls
+    document.getElementById("play").onclick = () => postMessageToPlayer('playVideo');
+    document.getElementById("pause").onclick = () => postMessageToPlayer('pauseVideo');
+    document.getElementById("mute").onclick = toggleMute;
+    document.getElementById("volume").oninput = function () {
+      postMessageToPlayer('setVolume', this.value);
+    };
+
+    function toggleMute() {
+      const icon = document.getElementById("mute");
+      if (icon.textContent === "🔊") {
+        postMessageToPlayer("mute");
+        icon.textContent = "🔇";
+      } else {
+        postMessageToPlayer("unMute");
+        icon.textContent = "🔊";
+      }
+    }
+
+    function postMessageToPlayer(func, value = null) {
+      const iframe = document.getElementById("youtube-frame");
+      iframe.contentWindow.postMessage(
+        JSON.stringify({
+          event: "command",
+          func: func,
+          args: value !== null ? [value] : []
+        }),
+        "*"
+      );
+    }
+
+    function seek(e) {
+      const bar = e.currentTarget;
+      const rect = bar.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      postMessageToPlayer("getDuration");
+      // We'll need JS SDK to support seek accurately.
+    }
+
+    // Note: Progress bar will need YouTube IFrame API to track time in real-time
+  </script>
+</body>
+</html>
